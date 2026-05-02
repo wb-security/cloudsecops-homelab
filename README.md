@@ -1,251 +1,145 @@
-# Purple Homelab  
-### A Fully Documented Purple Team Cybersecurity Lab (Blue + Red Focus)
+# CloudSecOps Homelab
+
+### Warren Bowen | Tier II NOC/SOC Engineer | CloudSecOps Pathway
 
 ---
 
-## 🎯 Overview  
-This repository documents the complete build, configuration, and ongoing development of my personal cybersecurity homelab.  
-The goal of this lab is to gain hands-on, real-world experience across **Purple Team**, **SOC**, **DFIR**, **Windows Security**, **Linux Security**, **Active Directory**, **SIEM**, **EDR**, **Threat Emulation**, and **Offensive Security** techniques.
+## Overview
 
-Everything here is built from scratch using:
-- Windows Server 2019 (Domain Controller)
-- Windows 10 Enterprise endpoints
-- Kali Linux attacker machine
-- VirtualBox
-- Custom network segmentation
-- Active Directory security hardening
-- Logging + SIEM integration (Splunk)
-- Threat simulation tools
+This repository documents my personal CloudSecOps homelab — a hands-on environment built to develop and demonstrate cloud security engineering skills that complement my production SOC experience.
 
-This repository grows as I grow. Every configuration, success, mistake, fix, and lesson is documented here.
+The lab is designed around four interconnected focus areas that mirror real enterprise security architecture: an on-premises Active Directory foundation, a Microsoft Azure cloud layer, a detection engineering layer for building and tuning detection logic, and a purple team exercise track for adversary simulation and hunt development.
+
+This is a living project. Documentation is added as each phase is built and validated.
 
 ---
 
-## 🧠 Purpose of the Lab  
-This lab enables me to:
-- Learn and practice **Active Directory administration**
-- Build realistic **enterprise-class environments**
-- Perform **Blue Team detection engineering**
-- Develop **Red Team tradecraft** in a safe environment
-- Understand how attackers move and how defenders detect them
-- Create a portfolio that proves hands-on technical skill  
-- Build toward SOC Analyst → Blue Team → Purple Team Engineer
+## Lab Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    AZURE CLOUD LAYER                    │
+│  Microsoft Sentinel │ Defender for Cloud │ Entra ID     │
+│  Log Analytics Workspace │ Security Center              │
+└──────────────────────────┬──────────────────────────────┘
+                           │ Hybrid connectivity
+┌──────────────────────────▼──────────────────────────────┐
+│                 ON-PREMISES ENVIRONMENT                  │
+│                                                         │
+│  ┌─────────────────┐      ┌─────────────────────────┐  │
+│  │  Windows Server │      │   Windows 10 Endpoint   │  │
+│  │  Domain Control │      │   Domain-joined client  │  │
+│  │  Active Director│      │   Simulated user target │  │
+│  └─────────────────┘      └─────────────────────────┘  │
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │              Kali Linux Attack Box              │   │
+│  │     Adversary simulation / purple team ops      │   │
+│  └─────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 🟪 Purple Team Goals  
-This lab focuses on BOTH sides:
-- **Blue Team** → Logging, alerting, detection, defense  
-- **Red Team** → Exploitation, lateral movement, persistence  
-- **Purple Team** → Running attacks, observing logs, writing detections
+## Focus Areas
 
-Practical outcomes:
-- Understanding how the entire kill-chain works  
-- Ability to emulate attackers using tools like:
-  - Kali Linux
-  - Metasploit
-  - Covenant
-  - Evil-WinRM
-  - BloodHound/SharpHound
-- Ability to detect attacks using:
-  - Splunk
-  - Sysmon
-  - Windows Event Logs
-  - Winlogbeat/Elastic (later)
-  - Sigma rules
+### 1. Active Directory Attack and Defense
+Building foundational knowledge of AD security by both attacking and defending the same environment. Coverage includes common AD attack paths (Kerberoasting, AS-REP Roasting, Pass-the-Hash, DCSync), detection logic for each technique, and hardening countermeasures validated against real attack tooling.
+
+### 2. Azure Cloud Security
+Deploying and configuring Microsoft's native cloud security stack: Microsoft Sentinel as the cloud SIEM, Defender for Cloud for posture management and workload protection, and Entra ID for identity security. Connecting on-premises AD to Azure via hybrid identity to mirror real enterprise environments.
+
+### 3. Detection Engineering
+Writing, testing, and tuning detection rules against known attack techniques. Focus on reducing false positive rates, improving signal quality, and building detections that survive adversary evasion attempts. All detections documented with the attack technique they target, the log source they rely on, and known evasion paths.
+
+### 4. Threat Hunting and Purple Team Exercises
+Structured purple team exercises using Kali Linux as the adversary platform against the Windows environment. Each exercise documents the attack path, the log artifacts generated, whether existing detections fired, and what new detections or log sources were identified as gaps.
 
 ---
 
-## 🏗 Lab Components  
-### **Virtual Machines**
-- **DC-1**  
-  - Windows Server 2019  
-  - Active Directory Domain Services  
-  - DNS  
-  - Group Policy  
-  - Security Hardening  
+## Repository Structure
 
-- **WIN10-1**  
-  - Windows 10 Enterprise  
-  - Domain-joined endpoint  
-  - Sysmon enabled  
-  - Splunk Universal Forwarder installed  
-
-- **Kali-1**  
-  - Kali Linux Rolling  
-  - Attacker host  
-  - Enumeration + exploitation tools  
-
----
-
-## 🔧 Core Security Tools  
-This lab will eventually include:
-- Splunk (SIEM)
-- Wazuh (later)
-- Sysmon
-- Sysmon Modular Config
-- Sysinternals Live Tools
-- Atomic Red Team
-- ATT&CK Navigator
-- BloodHound
-- Kerbrute
-- Impacket tools
-- Hashcat
-- Wireshark
-- PCAP analysis tools
-
----
-
-## 📚 Documentation Style  
-Every task is documented in a **consistent, professional format**:
-
-### ✔ Task Format:  
-- Purpose  
-- Steps taken  
-- Screenshots (when applicable)  
-- Issues encountered  
-- Fixes applied  
-- Lessons learned  
-- Commands used  
-
-### ✔ Commit Style  
-Each commit message will follow:
-
-[DC-1] Added new OU structure + admin account work
-[WIN10-1] Installed Sysmon + base configuration
-[KALI-1] Ran initial enumeration tests against DC
-[LAB] Updated README + folder structure
-
-yaml
-Copy code
-
----
-
-## 📁 Repository Structure
-
-purple-homelab/
-│
+```
+cloudsecops-homelab/
 ├── README.md
-├── /documentation/
-│ ├── dc-1/
-│ ├── win10-1/
-│ ├── kali-1/
-│ ├── troubleshooting/
-│ └── lessons-learned/
-│
-├── /configs/
-│ ├── sysmon/
-│ ├── splunk/
-│ └── gpo/
-│
-├── /screenshots/
-│ ├── dc-1/
-│ ├── win10-1/
-│ └── kali-1/
-│
-└── /attacks/
-├── credential-access/
-├── lateral-movement/
-├── privilege-escalation/
-└── persistence/
-
-yaml
-Copy code
-
----
-
-## 🧪 Offensive + Defensive Scenarios  
-This lab will include full write-ups for:
-
-### **Red Team Techniques**
-- Password spraying  
-- Kerberoasting  
-- AS-REP roasting  
-- Lateral movement via WinRM / RDP  
-- Service account enumeration  
-- Token impersonation  
-- Credential dumping  
-- Attack path mapping (BloodHound)
-
-### **Blue Team Techniques**
-- Building detection rules  
-- Reviewing logs in Splunk  
-- Mapping alerts to MITRE ATT&CK  
-- Investigating malicious authentication attempts  
-- Creating dashboards  
-- SIEM alerting logic  
-- Windows Event Log deep dives  
-
-### **Purple Team Exercises**
-- Run the attack  
-- Capture logs  
-- Analyze logs  
-- Build a detection rule  
-- Validate the detection rule by rerunning attack  
+├── infrastructure/
+│   ├── network-diagram.md
+│   ├── active-directory-setup.md
+│   ├── azure-environment-setup.md
+│   └── sentinel-workspace-config.md
+├── active-directory/
+│   ├── README.md
+│   ├── attack-techniques/
+│   │   ├── kerberoasting.md
+│   │   ├── as-rep-roasting.md
+│   │   ├── pass-the-hash.md
+│   │   └── dcsync.md
+│   └── defenses/
+│       ├── tiered-admin-model.md
+│       └── ad-hardening-checklist.md
+├── azure-security/
+│   ├── README.md
+│   ├── sentinel-setup.md
+│   ├── defender-for-cloud-config.md
+│   ├── entra-id-hardening.md
+│   └── conditional-access-policies.md
+├── detection-engineering/
+│   ├── README.md
+│   ├── detection-template.md
+│   └── detections/
+│       ├── kerberoasting-detection.md
+│       ├── impossible-travel-detection.md
+│       └── inbox-forwarding-rule-detection.md
+└── purple-team/
+    ├── README.md
+    ├── exercise-template.md
+    └── exercises/
+        └── (exercises added as completed)
+```
 
 ---
 
-## 🧩 What This Lab Proves About Me  
-This repository demonstrates:
-- Hands-on experience beyond certifications  
-- Ability to build production-like environments  
-- Experience with real tooling (SIEM, GPO, AD, Sysmon, Kali)  
-- Understanding of attacker methodology  
-- Ability to write detections  
-- Documentation and engineering discipline  
-- Independent problem-solving  
+## Build Roadmap
+
+### Phase 1 — On-Premises Foundation *(in progress)*
+- [ ] Windows Server — Domain Controller setup and AD configuration
+- [ ] Windows 10 endpoint — domain join and baseline configuration
+- [ ] Kali Linux — attack tooling setup
+- [ ] Basic AD attack and defense documentation
+
+### Phase 2 — Azure Integration
+- [ ] Azure tenant setup and Log Analytics Workspace
+- [ ] Microsoft Sentinel deployment and on-prem log forwarding
+- [ ] Defender for Cloud enablement
+- [ ] Entra ID hybrid identity configuration
+
+### Phase 3 — Detection Engineering
+- [ ] Detection rule templates and documentation standard
+- [ ] Initial detection set targeting Phase 1 AD attack techniques
+- [ ] False positive tuning and evasion testing
+
+### Phase 4 — Purple Team Exercises
+- [ ] Structured exercise format and documentation template
+- [ ] First full exercise: Kerberoasting end-to-end
+- [ ] Detection gap analysis and remediation
 
 ---
 
-## 🚀 Roadmap  
-### **Phase 1 – Core Build**
-- Build VMs  
-- Configure network  
-- Install AD DS  
-- Join domain  
-- Install Sysmon  
-- Install Splunk Universal Forwarder  
+## Tools and Platforms
 
-### **Phase 2 – Logging + Monitoring**
-- Forward logs into Splunk  
-- Configure Sysmon modular  
-- Build dashboards  
-
-### **Phase 3 – Attack Simulation**
-- Run privilege escalation attacks  
-- Run credential attacks  
-- Run lateral movement  
-
-### **Phase 4 – Detection Engineering**
-- Build SIEM rules  
-- Map detections to ATT&CK  
-- Document findings  
+| Category | Tool |
+|---|---|
+| Cloud SIEM | Microsoft Sentinel |
+| Cloud Security Posture | Microsoft Defender for Cloud |
+| Identity | Microsoft Entra ID (Azure AD) |
+| On-Prem Directory | Active Directory Domain Services |
+| Adversary Simulation | Kali Linux, Impacket, Mimikatz, BloodHound |
+| AD Enumeration | BloodHound, SharpHound, PowerView |
+| Detection Development | KQL (Kusto Query Language) |
+| Virtualization | *(to be documented)* |
 
 ---
 
-## 🧵 Lessons Learned Section  
-Every challenge, error, or fix goes into `/documentation/lessons-learned/`.
+## Related
 
-This is an important part of the portfolio — it shows:
-- Troubleshooting skill  
-- Understanding of system behavior  
-- Growth over time  
-
----
-
-## 🤝 Contributions  
-This is a personal learning environment, but feedback is welcome.
-
----
-
-## 📬 Contact  
-**Warren Bowen Jr. (wb-security)**  
-GitHub: https://github.com/wb-security  
-
----
-
-## 🌟 Final Note  
-This homelab represents my growth as a cybersecurity professional.  
-It will expand continuously as I learn new tools, new techniques, and new ways to think like both an attacker and a defender.
-
-Feedback, suggestions, and ideas for new lab scenarios are always welcome.
+- [Security Operations Portfolio](https://github.com/wb-security/security-operations-portfolio) — Production SOC methodology, case studies, and documentation standards from my Tier II NOC/SOC engineering work
